@@ -122,27 +122,33 @@ namespace ManagePassword.Controllers
         [HttpPost]
         public IActionResult SetPassword(PasswordModel model)
         {
-            var exitsUrl = _db.Generals.Where(x => x.Website == model.WebSite).FirstOrDefault();
-            if (exitsUrl != null)
+
+            General general = new General()
             {
-                exitsUrl.Password = model.Password;
-                exitsUrl.Username = model.Username;
-                _db.SaveChanges();
-            }
-            else
-            {
-                General general = new General()
-                {
-                    Password = model.Password,
-                    Username = model.Username,
-                    Website = model.WebSite
-                };
-                _db.Generals.Add(general);
-                _db.SaveChanges();
-            }
+                Password = model.Password,
+                Username = model.Username,
+                Website = model.WebSite
+            };
+            _db.Generals.Add(general);
+            _db.SaveChanges();
+            //var exitsUrl = _db.Generals.Where(x => x.Website == model.WebSite).FirstOrDefault();
+            //if (exitsUrl != null)
+            //{
+            //    exitsUrl.Password = model.Password;
+            //    exitsUrl.Username = model.Username;
+            //    _db.SaveChanges();
+            //}
+            //else
+            //{
+               
+            //}
             return RedirectToAction(nameof(MyProfile));
         }
         
+        public IActionResult GetPassword()
+        {
+            return View();
+        }
         [HttpPost]
         public IActionResult GetPassword( PasswordModel model)
         {
@@ -162,8 +168,7 @@ namespace ManagePassword.Controllers
             {
                 lists = _db.Generals.Where(x => x.Website == model.WebSite).ToList();
             }
-            GetResult(lists);
-            return RedirectToAction(nameof(GetResult));
+            return View(lists);
         }
 
         public IActionResult GetResult(List<General> generals)
