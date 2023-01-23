@@ -1,0 +1,24 @@
+@model IEnumerable<ManagePassword.Database.Entity.General>
+@{
+    ViewData["Title"] = "GetResult";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+ <div class="row" style="margin: auto;">
+
+     <div class="col">
+         @foreach (var item in Model)
+         {
+             <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Password)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Username)
+        </td>
+       
+    </tr>
+         }
+     </div>
+  </div>

@@ -6,6 +6,12 @@
 
 <h2>Login</h2>
 
+@if (ViewBag.Alert != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.Alert
+</div>
+}
 @if (ViewBag.Status == null || !ViewBag.Status)
 
 {
@@ -17,8 +23,8 @@
         @using (Html.BeginForm())
 
         {
-
-            <div class="form-group">
+            <div class="loginCard" >
+                   <div class="form-group">
 
                 <label for="Username">Username : </label>
 
@@ -38,7 +44,10 @@
 
             </div>
 
-            <input type="submit" value="Login" class="btn btn-default" />
+            <input type="submit" value="Login" class="btn btn-dark btn-sm" >
+
+            </div>
+         
 
         }
 
@@ -51,9 +60,10 @@ else
 
     <!--Show 2FA verification form here-->
 
-    <div>@ViewBag.Message</div>
-
-    <div> <img src="@ViewBag.BarcodeImageUrl" /> </div>
+    
+ <div class="loginCard" >
+    <h3 style="text-align: center;">@ViewBag.Message</h3>
+    <div > <img  style="padding: 15px; margin-left: 150px;" src="@ViewBag.BarcodeImageUrl" /> </div>
 
     <div> Manual Setup Code : @ViewBag.SetupCode </div>
 
@@ -65,12 +75,12 @@ else
 
         {
 
-            <input type="text" name="passcode" />
+            <input type="text" class="form-control" name="passcode" style="margin-top: 10px;" />
 
-            <input type="submit" class="btn btn-success" />
+            <input type="submit" class="btn btn-success btn-sm" />
 
         }
-
+  </div>
     </div>
 
 }

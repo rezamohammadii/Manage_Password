@@ -1,4 +1,6 @@
 ﻿using Google.Authenticator;
+using ManagePassword.Database;
+using ManagePassword.Database.Entity;
 using ManagePassword.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -8,11 +10,15 @@ namespace ManagePassword.Controllers
 {
     public class HomeController : Controller
     {
+
         private readonly ILogger<HomeController> _logger;
+        private DataBaseContext _db;
         private const string Key = "dfg756!@@)(*";
-        public HomeController(ILogger<HomeController> logger)
+        List<General> lists = new List<General>();
+        public HomeController(ILogger<HomeController> logger , DataBaseContext db)
         {
             _logger = logger;
+            _db = db;
         }
 
         public IActionResult Index()
@@ -35,10 +41,10 @@ namespace ManagePassword.Controllers
                 status = true; //It indicates 2FA form
 
                 message = "2FA Verification";
-                
+
                 byte[] userToByte = Encoding.ASCII.GetBytes(login.Username);
-                    
-                HttpContext.Session.Set("auth" , userToByte);
+
+                HttpContext.Session.Set("auth", userToByte);
 
 
                 //2FA Setup
@@ -47,11 +53,11 @@ namespace ManagePassword.Controllers
 
                 string uniqueKeyforUser = (login.Username + Key);
 
-              //  Session["UserUniqueKey"] = UserUniqueKey;
+                //  Session["UserUniqueKey"] = UserUniqueKey;
 
                 var setupInfo = tfa.GenerateSetupCode("AGENT-47 Awesome",
 
-                login.Username, uniqueKeyforUser,false ,3);
+                login.Username, uniqueKeyforUser, false, 3);
 
                 ViewBag.BarcodeImageUrl = setupInfo.QrCodeSetupImageUrl;
 
@@ -75,7 +81,7 @@ namespace ManagePassword.Controllers
 
             return View();
         }
-        public ActionResult MyProfile()
+        public IActionResult MyProfile()
         {
             string? user = HttpContext.Session.GetString("auth");
 
@@ -86,7 +92,7 @@ namespace ManagePassword.Controllers
 
             }
 
-         //  user = Encoding.ASCII.GetString()
+            //  user = Encoding.ASCII.GetString()
 
             ViewBag.Message = "Welcome " + user;
 
@@ -109,18 +115,61 @@ namespace ManagePassword.Controllers
                 //       Session["IsValidAuthentication"] = true;
                 return RedirectToAction("MyProfile", "Home");
             }
+            ViewBag.Alert = "Code is not valid";
             return RedirectToAction("Login", "Home");
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult SetPassword(PasswordModel model)
         {
-            return View();
+            var exitsUrl = _db.Generals.Where(x => x.Website == model.WebSite).FirstOrDefault();
+            if (exitsUrl != null)
+            {
+                exitsUrl.Password = model.Password;
+                exitsUrl.Username = model.Username;
+                _db.SaveChanges();
+            }
+            else
+            {
+                General general = new General()
+                {
+                    Password = model.Password,
+                    Username = model.Username,
+                    Website = model.WebSite
+                };
+                _db.Generals.Add(general);
+                _db.SaveChanges();
+            }
+            return RedirectToAction(nameof(MyProfile));
+        }
+        
+        [HttpPost]
+        public IActionResult GetPassword( PasswordModel model)
+        {
+            
+            if (model.Username != null && model.WebSite != null)
+            {
+
+                lists = _db.Generals.Where(x => x.Username == model.Username && x.Website == model.WebSite).ToList();
+
+
+            }
+            else if (model.Username != null)
+            {
+                lists = _db.Generals.Where(x => x.Username == model.Username).ToList();
+            }
+            else
+            {
+                lists = _db.Generals.Where(x => x.Website == model.WebSite).ToList();
+            }
+            GetResult(lists);
+            return RedirectToAction(nameof(GetResult));
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult GetResult(List<General> generals)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            generals = lists;
+            return View(generals);
         }
     }
 }

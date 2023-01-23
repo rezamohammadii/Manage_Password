@@ -1,6 +1,53 @@
-﻿@{
-                   ViewBag.Title = "AuthorizedProfile";
-                }
-                <h2>Authorized Profile</h2>
+﻿@model ManagePassword.Models.PasswordModel
+@* @{
+    ViewBag.Title = "AuthorizedProfile";
+    }
+    <h2>Authorized Profile</h2>
 
-                <h5>@ViewBag.Message</h5>
+    <h5>@ViewBag.Message</h5> *@
+@{
+    Layout = "~/Views/Shared/_Profile.cshtml";
+}
+
+<div class="row" style="margin: auto;">
+    <div class="col">
+        <h3 style="text-align: center;">Set Password</h3>
+        <div class="loginCard">
+            <form asp-action="SetPassword" method="post">
+                <label for="Password">Web Site : </label>
+                <input type="text" asp-for="WebSite" class="form-control" name="WebSite" style="margin-top: 10px;" />
+
+                <label for="Password">Username : </label>
+                <input type="text" asp-for="Username" class="form-control" name="Username" style="margin-top: 10px;" />
+
+                <label for="Password">Password : </label>
+                <input type="password" asp-for="Password" class="form-control" name="Password" style="margin-top: 10px;" />
+                <input type="submit" class="btn btn-outline-info btn-sm" value="Save" />
+            </form>
+
+        </div>
+    </div>
+    <div class="col">
+        <h3 style="text-align: center;">Get Password</h3>
+        <div class="loginCard">
+            <form asp-action="GetPassword">
+                <label for="Password">Web Site : </label>
+                <input type="text" asp-for="WebSite" class="form-control" name="WebSite" style="margin-top: 10px;" />
+
+                <label for="Password">Username : </label>
+                <input type="text" asp-for="Username" class="form-control" name="Username" style="margin-top: 10px;" />
+
+                @* <label for="Password">Password : </label>
+                    <input type="text" asp-for="Password" class="form-control" name="passcode" style="margin-top: 10px;" /> *@
+
+                <input type="submit" class="btn btn-outline-info btn-sm" value="Request" />
+            </form>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
